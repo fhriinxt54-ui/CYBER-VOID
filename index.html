@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYBER VOID</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Orbitron',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow:hidden;transition:background .5s, color .5s}
+body.light-mode{background:#f0f0f0;color:#111}
+body.light-mode .card{background:rgba(255,255,255,.85);border-color:#7c3aed}
+body.light-mode input,body.light-mode textarea{background:#fff;color:#111}
+
+/* ===== BINTANG ===== */
+@keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1}}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 2s ease-in-out infinite}
+.star:nth-child(1){top:10%;left:5%;animation-delay:0s}
+.star:nth-child(2){top:20%;left:85%;animation-delay:.5s}
+.star:nth-child(3){top:60%;left:10%;animation-delay:1s}
+.star:nth-child(4){top:80%;left:90%;animation-delay:1.5s}
+.star:nth-child(5){top:40%;left:50%;animation-delay:.3s}
+.star:nth-child(6){top:70%;left:30%;animation-delay:.8s}
+.star:nth-child(7){top:15%;left:45%;animation-delay:1.2s}
+.star:nth-child(8){top:90%;left:70%;animation-delay:.6s}
+.star:nth-child(9){top:50%;left:15%;animation-delay:1.8s}
+.star:nth-child(10){top:35%;left:75%;animation-delay:.2s}
+
+/* ===== GLITCH ===== */
+@keyframes glitch{0%,100%{text-shadow:0 0 40px rgba(255,0,76,.5),0 0 80px rgba(255,0,76,.2)}25%{text-shadow:5px 0 20px rgba(255,0,76,.8),-5px 0 20px rgba(124,58,237,.8),0 0 80px rgba(255,0,76,.3)}50%{text-shadow:-5px 0 20px rgba(255,0,76,.8),5px 0 20px rgba(124,58,237,.8),0 0 80px rgba(255,0,76,.3)}75%{text-shadow:5px 0 20px rgba(255,0,76,.8),-5px 0 20px rgba(124,58,237,.8),0 0 80px rgba(255,0,76,.3)}}
+
+/* ===== WELCOME ===== */
+#welcome{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:#0a0a0a;flex-direction:column;padding:20px}
+#welcome h1{font-size:clamp(2rem,8vw,4rem);color:#ff004c;text-shadow:0 0 40px rgba(255,0,76,.5),0 0 80px rgba(255,0,76,.2),0 0 120px rgba(255,0,76,.1);letter-spacing:5px;animation:glitch 2s infinite}
+#welcome p{color:#a855f7;font-size:clamp(.8rem,2vw,1.2rem);letter-spacing:3px;margin-top:10px;opacity:.7}
+#welcome .enter-btn{margin-top:30px;padding:16px 50px;background:linear-gradient(90deg,#ff004c,#7c3aed);border:none;border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:2px;box-shadow:0 0 40px rgba(124,58,237,.3)}
+#welcome .enter-btn:hover{transform:scale(1.05);box-shadow:0 0 60px rgba(124,58,237,.5)}
+
+/* ===== INTRO VIDEO (UKURAN 321x613, RADIUS 45) ===== */
+#intro{position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;flex-direction:column}
+#intro .video-wrapper{width:321px;height:613px;border-radius:45px;overflow:hidden;box-shadow:0 0 60px rgba(124,58,237,.3);position:relative;flex-shrink:0}
+#intro video{width:100%;height:100%;display:block;object-fit:cover}
+#intro .skip{position:absolute;top:15px;right:15px;padding:10px 24px;background:rgba(255,0,76,.85);border:none;border-radius:10px;color:#fff;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:1px;z-index:10}
+#intro .skip:hover{background:#ff004c;transform:scale(1.05)}
+
+/* ===== HOME / MENU UTAMA ===== */
+#home{display:none;padding:20px;padding-top:70px;max-width:600px;margin:0 auto;position:relative;z-index:1;overflow-y:auto;max-height:100vh}
+#home::-webkit-scrollbar{width:4px}
+#home::-webkit-scrollbar-thumb{background:#7c3aed;border-radius:10px}
+
+#clock{position:fixed;top:15px;left:15px;background:rgba(10,10,10,.85);padding:8px 18px;border-radius:12px;border:1px solid rgba(0,255,200,.5);font-size:13px;z-index:999;font-family:'Orbitron',sans-serif;color:#00ffc8;box-shadow:0 0 30px rgba(0,255,200,.1);letter-spacing:1px}
+
+/* ===== PROFILE ===== */
+.profile{text-align:center;padding:10px 0 20px}
+.avatar{width:100px;height:100px;border-radius:50%;border:3px solid #ff004c;box-shadow:0 0 30px rgba(255,0,76,.3);transition:all .3s;object-fit:cover;cursor:pointer}
+.avatar:hover{transform:scale(1.05);box-shadow:0 0 50px rgba(255,0,76,.5)}
+#nameView{font-size:20px;letter-spacing:2px;margin-top:10px}
+#bioView{color:#a855f7;font-size:12px;letter-spacing:1px}
+
+/* ===== CAROUSEL 5 SLIDE ===== */
+.carousel-wrapper{max-width:419px;margin:0 auto 20px;position:relative;border-radius:45px;overflow:hidden;box-shadow:0 0 40px rgba(124,58,237,.2)}
+.carousel-container{display:flex;transition:transform .5s ease;border-radius:45px}
+.carousel-slide{min-width:100%;height:161px;border-radius:45px;overflow:hidden}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;display:block;border-radius:45px}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);border:2px solid rgba(124,58,237,.5);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;cursor:pointer;transition:all .3s;z-index:2;backdrop-filter:blur(5px)}
+.carousel-btn:hover{background:rgba(124,58,237,.5);border-color:#a855f7}
+.carousel-btn.prev{left:10px}
+.carousel-btn.next{right:10px}
+.carousel-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+.carousel-dots .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .3s}
+.carousel-dots .dot.active{background:#a855f7;border-color:#a855f7;box-shadow:0 0 15px rgba(168,85,247,.5)}
+
+/* ===== CARD ===== */
+.card{background:rgba(20,20,20,.7);border:1px solid rgba(124,58,237,.3);border-radius:16px;padding:20px;margin-bottom:20px;backdrop-filter:blur(15px);transition:all .3s}
+.card:hover{border-color:rgba(124,58,237,.6);box-shadow:0 0 30px rgba(124,58,237,.1)}
+.card h3{font-size:16px;letter-spacing:2px;margin-bottom:15px;color:#00ffc8}
+
+/* ===== GRID FITUR ===== */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px}
+.fitem{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:12px 8px;text-align:center;font-size:10px;cursor:pointer;transition:all .3s;font-family:'Orbitron',sans-serif}
+.fitem:hover{background:rgba(124,58,237,.25);transform:translateY(-3px) scale(1.03);box-shadow:0 8px 30px rgba(124,58,237,.2);border-color:rgba(124,58,237,.7)}
+.fitem strong{display:block;font-size:13px;color:#a855f7;margin-bottom:3px;text-shadow:0 0 20px rgba(168,85,247,.3)}
+
+/* ===== LINKTREE ===== */
+.linktree-item{display:flex;gap:10px;align-items:center;margin:8px 0}
+.linktree-item input{flex:1;padding:10px;border-radius:10px;background:rgba(17,17,17,.9);color:#fff;border:1px solid rgba(124,58,237,.4);font-family:'Orbitron',sans-serif;font-size:11px}
+.linktree-item select{flex:0 0 120px;padding:10px;border-radius:10px;background:rgba(17,17,17,.9);color:#fff;border:1px solid rgba(124,58,237,.4);font-family:'Orbitron',sans-serif;font-size:11px}
+.linktree-item button{background:#ff004c;border:none;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;cursor:pointer}
+.linktree-list{margin-top:10px}
+.linktree-list .lt-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(124,58,237,.1);border-radius:10px;margin:5px 0;border:1px solid rgba(124,58,237,.2)}
+.linktree-list .lt-item a{color:#a855f7;text-decoration:none;font-size:12px}
+.linktree-list .lt-item .del-btn{background:transparent;border:none;color:#ff004c;cursor:pointer;font-size:16px}
+
+/* ===== INPUT ===== */
+input,textarea{width:100%;padding:12px;margin:8px 0;border-radius:12px;background:rgba(17,17,17,.9);color:#fff;border:1px solid rgba(124,58,237,.4);font-family:'Orbitron',sans-serif;font-size:11px;transition:all .3s}
+input:focus,textarea:focus{outline:none;border-color:#a855f7;box-shadow:0 0 20px rgba(124,58,237,.2)}
+textarea{min-height:60px;resize:vertical}
+
+.btn-save{width:100%;padding:14px;margin-top:10px;border-radius:12px;background:linear-gradient(90deg,#ff004c,#7c3aed);border:none;color:#fff;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:1px}
+.btn-save:hover{transform:scale(1.02);box-shadow:0 0 50px rgba(124,58,237,.4)}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.95);border:1px solid rgba(124,58,237,.6);border-radius:16px;padding:18px 30px;z-index:9999;max-width:90%;backdrop-filter:blur(20px);box-shadow:0 0 40px rgba(124,58,237,.15);font-family:'Orbitron',sans-serif;text-align:center}
+
+/* ===== THEME COLORS ===== */
+.theme-red{--primary:#ff004c}
+.theme-blue{--primary:#0066ff}
+.theme-green{--primary:#00ff66}
+.theme-purple{--primary:#a855f7}
+.theme-orange{--primary:#ff6b00}
+.theme-pink{--primary:#ff00ff}
+</style>
+</head>
+<body>
+
+<!-- BINTANG -->
+<div class="stars" id="starsContainer"></div>
+
+<!-- ===== 1. WELCOME ===== -->
+<section id="welcome">
+<h1>𝐂𝐘𝐁𝐄𝐑 𝐕𝐎𝐈𝐃</h1>
+<p>⚡ ENTER THE VOID ⚡</p>
+<button class="enter-btn" onclick="showIntro()">⟳ 𝐄𝐍𝐓𝐄𝐑</button>
+</section>
+
+<!-- ===== 2. INTRO VIDEO (321x613, RADIUS 45) ===== -->
+<section id="intro">
+<div class="video-wrapper">
+<video id="introVideo" playsinline>
+<source src="" id="introVideoSource" type="video/mp4">
+</video>
+<button class="skip" onclick="skipIntro()">⏭ 𝐒𝐊𝐈𝐏</button>
+</div>
+</section>
+
+<!-- ===== 3. HOME ===== -->
+<section id="home">
+
+<div id="clock">⏰ 00:00:00</div>
+
+<!-- PROFILE -->
+<div class="profile">
+<label for="avatarInput" style="cursor:pointer;">
+<img id="avatar" class="avatar" src="https://via.placeholder.com/100" alt="Avatar">
+</label>
+<input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
+<h2 id="nameView">𝐂𝐘𝐁𝐄𝐑 𝐕𝐎𝐈𝐃</h2>
+<p id="bioView">⚡ 𝐃𝐈𝐆𝐈𝐓𝐀𝐋 𝐕𝐎𝐈𝐃 ⚡</p>
+</div>
+
+<!-- CAROUSEL 5 SLIDE -->
+<div class="carousel-wrapper">
+<div class="carousel-container" id="carouselContainer">
+<div class="carousel-slide"><img src="https://picsum.photos/419/161?random=1" alt="Slide 1"></div>
+<div class="carousel-slide"><img src="https://picsum.photos/419/161?random=2" alt="Slide 2"></div>
+<div class="carousel-slide"><img src="https://picsum.photos/419/161?random=3" alt="Slide 3"></div>
+<div class="carousel-slide"><img src="https://picsum.photos/419/161?random=4" alt="Slide 4"></div>
+<div class="carousel-slide"><img src="https://picsum.photos/419/161?random=5" alt="Slide 5"></div>
+</div>
+<button class="carousel-btn prev" onclick="moveCarousel(-1)">‹</button>
+<button class="carousel-btn next" onclick="moveCarousel(1)">›</button>
+<div class="carousel-dots" id="carouselDots"></div>
+</div>
+
+<!-- MENU DASHBOARD -->
+<div class="card">
+<h3>📊 𝐃𝐀𝐒𝐇𝐁𝐎𝐀𝐑𝐃</h3>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:12px">
+<div>👤 Profile: <span id="dashName">CYBER VOID</span></div>
+<div>🎵 Lagu: <span id="dashSong">-</span></div>
+<div>🌓 Mode: <span id="dashMode">Dark</span></div>
+<div>🎨 Tema: <span id="dashTheme">Default</span></div>
+</div>
+</div>
+
+<!-- FITUR UTAMA -->
+<div class="card">
+<h3>🎮 𝐅𝐈𝐓𝐔𝐑</h3>
+<div class="grid-3">
+<div class="fitem" onclick="toggleDarkMode()"><strong>🌓</strong>𝐃𝐚𝐫𝐤/𝐋𝐢𝐠𝐡𝐭</div>
+<div class="fitem" onclick="changeTheme('red')"><strong>🔴</strong>𝐓𝐞𝐦𝐚 𝐌𝐞𝐫𝐚𝐡</div>
+<div class="fitem" onclick="changeTheme('blue')"><strong>🔵</strong>𝐓𝐞𝐦𝐚 𝐁𝐢𝐫𝐮</div>
+<div class="fitem" onclick="changeTheme('green')"><strong>🟢</strong>𝐓𝐞𝐦𝐚 𝐇𝐢𝐣𝐚𝐮</div>
+<div class="fitem" onclick="changeTheme('purple')"><strong>🟣</strong>𝐓𝐞𝐦𝐚 𝐔𝐧𝐠𝐮</div>
+<div class="fitem" onclick="changeTheme('orange')"><strong>🟠</strong>𝐓𝐞𝐦𝐚 𝐎𝐫𝐚𝐧𝐠𝐞</div>
+<div class="fitem" onclick="changeTheme('pink')"><strong>🩷</strong>𝐓𝐞𝐦𝐚 𝐏𝐢𝐧𝐤</div>
+<div class="fitem" onclick="randomNumber()"><strong>🎲</strong>𝐑𝐚𝐧𝐝𝐨𝐦</div>
+<div class="fitem" onclick="copyText()"><strong>📋</strong>𝐂𝐨𝐩𝐲</div>
+<div class="fitem" onclick="reloadPage()"><strong>🔄</strong>𝐑𝐞𝐥𝐨𝐚𝐝</div>
+<div class="fitem" onclick="showDate()"><strong>📅</strong>𝐃𝐚𝐭𝐞</div>
+<div class="fitem" onclick="particleBurst()"><strong>✨</strong>𝐏𝐚𝐫𝐭𝐢𝐜𝐥𝐞</div>
+</div>
+</div>
+
+<!-- MUSIC PLAYER -->
+<div class="card">
+<h3>🎵 𝐌𝐔𝐒𝐈𝐂</h3>
+<div class="song-indicator" id="songIndicator">🎵 𝐋𝐚𝐠𝐮 𝟏 𝐝𝐚𝐫𝐢 𝟔</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button class="btn-save" style="flex:1" onclick="toggleMusic()">▶️ 𝐏𝐥𝐚𝐲</button>
+<button class="btn-save" style="flex:1" onclick="nextSong()">⏭ 𝐍𝐞𝐱𝐭</button>
+</div>
+<input type="file" id="mp3Upload" accept="audio/mp3" onchange="uploadMP3(event)">
+<label for="mp3Upload" class="btn-save" style="display:block;text-align:center;cursor:pointer;margin-top:5px">📤 𝐔𝐩𝐥𝐨𝐚𝐝 𝐌𝐏𝟑</label>
+</div>
+
+<!-- UPLOAD VIDEO INTRO -->
+<div class="card">
+<h3>🎬 𝐔𝐩𝐥𝐨𝐚𝐝 𝐕𝐢𝐝𝐞𝐨 𝐈𝐧𝐭𝐫𝐨</h3>
+<input type="file" id="videoUpload" accept="video/mp4" onchange="uploadIntroVideo(event)">
+<label for="videoUpload" class="btn-save" style="display:block;text-align:center;cursor:pointer;margin-top:5px">📤 𝐔𝐩𝐥𝐨𝐚𝐝 𝐕𝐢𝐝𝐞𝐨</label>
+</div>
+
+<!-- LINKTREE -->
+<div class="card">
+<h3>🔗 𝐋𝐈𝐍𝐊𝐓𝐑𝐄𝐄</h3>
+<div class="linktree-item">
+<select id="platformSelect">
+<option value="tiktok">TikTok</option>
+<option value="instagram">Instagram</option>
+<option value="youtube">YouTube</option>
+<option value="twitter">Twitter/X</option>
+<option value="facebook">Facebook</option>
+<option value="github">GitHub</option>
+<option value="whatsapp">WhatsApp</option>
+<option value="telegram">Telegram</option>
+<option value="discord">Discord</option>
+<option value="spotify">Spotify</option>
+</select>
+<input id="usernameInput" placeholder="Username...">
+<button onclick="addLinktree()">➕</button>
+</div>
+<div class="linktree-list" id="linktreeList"></div>
+</div>
+
+<!-- EDIT PROFIL -->
+<div class="card">
+<h3>✏️ 𝐄𝐝𝐢𝐭 𝐏𝐫𝐨𝐟𝐢𝐥</h3>
+<input id="nameEdit" placeholder="𝐍𝐚𝐦𝐚 𝐏𝐫𝐨𝐟𝐢𝐥">
+<textarea id="bioEdit" placeholder="𝐁𝐢𝐨"></textarea>
+<button class="btn-save" onclick="saveProfile()">💾 𝐒𝐀𝐕𝐄</button>
+</div>
+
+</section>
+
+<audio id="bgMusic" preload="auto"></audio>
+
+<script>
+// ===== BINTANG =====
+(function(){
+  const container = document.getElementById('starsContainer');
+  for(let i=0;i<30;i++){
+    const star = document.createElement('div');
+    star.className='star';
+    star.style.top=Math.random()*100+'%';
+    star.style.left=Math.random()*100+'%';
+    star.style.animationDelay=Math.random()*3+'s';
+    star.style.width=(Math.random()*3+1)+'px';
+    star.style.height=star.style.width;
+    container.appendChild(star);
+  }
+})();
+
+// ===== VARIABEL =====
+let currentSlide = 0;
+const totalSlides = 5;
+let autoSlideInterval = null;
+let currentSongIndex = 0;
+let isPlaying = false;
+let playlist = [];
+let linktreeData = JSON.parse(localStorage.getItem('linktree')) || [];
+let introVideoURL = localStorage.getItem('introVideo') || '';
+
+// ===== PLAYLIST MP3 (6 LAGU) =====
+const defaultPlaylist = [
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vZDY3ODM2MTEwMTZiMzg2ZWEyNTZhZjc0NDgwYWE3MzEvNmE0Nzg5MTgvdmlkZW8vdG9zL2FsaXNnL3Rvcy1hbGlzZy12LTI3ZGNkNy9vWWRVS0RGeVZFRDU3MUFDSkpBZ2ZrRWVwSkV0SmFtQlFBblFBQi8oo00oYT01ODM5NjUmYnRpPU9VQnpPVGc3UUdvNk9qWkFMM0FqTFRBellDTXhORE5nJiZidD0xMjUmZnQ9NEtVcjVNTUQ4Wm1vMDIybG5hNGpWVmlNaVJGcktzZC4mbWltZV90eXBlPWF1ZGlvX21wZWcmcmM9YW05eVBIUTVjbmhxT2pNek9EVThORUJwYW05eVBIUTVjbmhxT2pNek9EVThORUF4YURGek1tUnpNVEZoTFMxa01TMXpZU014YURGek1tUnpNVEZoTFMxa01TMXpjdyUzRCUzRCZ2dnBsPTEmbD0yMDI2MDYyNjEwMDI1ODFCQzA2RDQ4QkQ3QjdEMDBFNUJCJmJ0YWc9ZTAwMDQ4MDAwJnNocD1kMDViMTRiZCZzaGNwPS0xNzgyNDY4MTc5&p=dtGslxrcdcG9raW8uY29tMTc4MjQ2ODE3OQO0O0OO0O0O&sf=.mp3',
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vZjkzZTYyNDA2OWNkMjM0OGFiZjQ2NGUyM2UzOGE3OWYvNmE0N2FiY2MvdmlkZW8vdG9zL2FsaXNnL3Rvcy1hbGlzZy12LTI3ZGNkNy9vMFFCUDJIQ0JJaERPRWlmQUFBSnJkZmRVckJGNURFcWdJSUlpdi8oo00oYT01ODM5NjUmYnRpPU9VQnpPVGc3UUdvNk9qWkFMM0FqTFRBellDTXhORE5nJiZidD0xMjUmZnQ9YUVSSllxcTJtMG5QRDEyNVNyaEkzd1UydUVHZ2FlRn5PNSZtaW1lX3R5cGU9YXVkaW9fbXBlZyZyYz1NMjgyTTJzNWNuRTdPek16T0RVOE5FQnBNMjgyTTJzNWNuRTdPek16T0RVOE5FQm1MM0l1TW1SalluSmhMUzFrTVMxellTTm1MM0l1TW1SalluSmhMUzFrTVMxemN3JTNEJTNEJnZ2cGw9MSZsPTIwMjYwNjI2MTIzMTAwREFDMzVENUNGQzMyRjkwMTRDQ0ImYnRhZz1lMDAwNDgwMDAmc2hwPWQwNWIxNGJkJnNoY3A9LTE3ODI0NzcwNjEO0O0O&p=dtGslxrcdcG9raW8uY29tMTc4MjQ3NzA2MQO0O0OO0O0O&sf=.mp3',
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vYjNiOGU0ZGUzZWNhYzAzZTUwNGM4YjM5ODZkMmRlZTMvNmE0N2FhNDcvdmlkZW8vdG9zL2FsaXNnL3Rvcy1hbGlzZy12LTI3ZGNkNy9vMEtDU2Z1ZUZMeGE1aGV3Z09JR3JlZXN3ODJzQU9UMk1BQ3p2Ti8oo00oYT01ODM5NjUmYnRpPU9UZzdRR281UUhNNk9qWkFMVEF6WUNNdmNDTXhORE5nJiZidD0xMjUmZnQ9bmsuNGkwc3ExN1R2alNEWFlTeFJDTnltTTZo000oT2diU1Jwc256WHRHJm1pbWVfdHlwZT1hdWRpb19tcGVnJnJjPVBEYzNPalUxUEdZN2FUWXphVE5wTmtCcGFuVnRPblE1Y25CcE9qTXpPRFU4TkVBMVlTMWdZVjR4WGpNeFhqSXZObU14WVNOcGEyQnpNbVJqTUdOaExTMWtNUzF6Y3clM0QlM0QmdnZwbD0xJmw9MjAyNjA2MjYxMjI0MDUzNEQ4MTAxMTA1RjI3ODAwNjU5RCZidGFnPWUwMDBjODAwMCZzaHA9ZDA1YjE0YmQmc2hjcD0tMTc4MjQ3NjY0NwO0O0OO0O0O&p=dtGslxrcdcG9raW8uY29tMTc4MjQ3NjY0NwO0O0OO0O0O&sf=.mp3',
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vMTU4ZDk2MWJlMTNlYmU1OWJiMTI5NzQyZWMwYmFhNDMvNmE0N2I3M2QvdmlkZW8vdG9zL2FsaXNnL3Rvcy1hbGlzZy12LTI3ZGNkNy9vQTZlVERZbzBRRDFBOUU2UTE0b0M2TVFzZ0ZrVGpQRW1kZFlmZS8oo00oYT01ODM5NjUmYnRpPU9VQnpPVGc3UUdvNk9qWkFMM0FqTFRBellDTXhORE5nJiZidD0xMjUmZnQ9a0p4S1N5dDRaWm8wUERiOGI3M2FROTZQZWNDNkpFLkNo000oJm1pbWVfdHlwZT1hdWRpb19tcGVnJnJjPU0yYzhOR2d6T1RROFBEczBaek0zTzBCcE16cDFORzQ1Y21oNE9qTXpPRFU4TkVBell5MDBNelF6Tm1JeExqVTFNRFF0WVNOdmFXY3pNbVJyYmpCaExTMWtNUzF6Y3clM0QlM0QmdnZwbD0xJmw9MjAyNjA2MjYxMzE5NTUxOUM1MDFBNzZDQTk2NTAzNTJCNCZidGFnPWUwMDBjODAwMCZzaHA9ZDA1YjE0YmQmc2hjcD0tMTc4MjQ3OTk5NgO0O0OO0O0O&p=dtGslxrcdcG9raW8uY29tMTc4MjQ3OTk5NgO0O0OO0O0O&sf=.mp3',
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0LzZlMDQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1L3ZpZGVvL3Rvcy9hbGlzZy90b3MtYWxpc2ctdi0yN2RjZDcvdjBrdFI2ZXIwVEQxQTlFNlExNG9DNk1Rc2dGa1RqUEVtZGRZZi8oo00oYT01ODM5NjUmYnRpPU9VQnpPVGc3UUdvNk9qWkFMM0FqTFRBellDTXhORE5nJiZidD0xMjUmZnQ9a0p4S1N5dDRaWm8wUERiOGI3M2FROTZQZWNDNkpFLkNo000oJm1pbWVfdHlwZT1hdWRpb19tcGVnJnJjPU0yYzhOR2d6T1RROFBEczBaek0zTzBCcE16cDFORzQ1Y21oNE9qTXpPRFU4TkVBell5MDBNelF6Tm1JeExqVTFNRFF0WVNOdmFXY3pNbVJyYmpCaExTMWtNUzF6Y3clM0QlM0QmdnZwbD0xJmw9MjAyNjA2MjYxMzE5NTUxOUM1MDFBNzZDQTk2NTAzNTJCNCZidGFnPWUwMDBjODAwMCZzaHA9ZDA1YjE0YmQmc2hjcD0tMTc4MjQ3OTk5NgO0O0OO0O0O&p=dtGslxrcdcG9raW8uY29tMTc4MjQ3OTk5NgO0O0OO0O0O&sf=.mp3',
+  'https://dl.tiktokio.com/download?token=atHsRx0cccHM6Ly92MTYtaWVzLW11c2ljLnRpa3Rva2Nkbi11cy5jb20vMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1LzZlMDQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1L3ZpZGVvL3Rvcy9hbGlzZy90b3MtYWxpc2ctdi0yN2RjZDcvdjBrdFI2ZXIwVEQxQTlFNlExNG9DNk1Rc2dGa1RqUEVtZGRZZi8oo00oYT01ODM5NjUmYnRpPU9VQnpPVGc3UUdvNk9qWkFMM0FqTFRBellDTXhORE5nJiZidD0xMjUmZnQ9a0p4S1N5dDRaWm8wUERiOGI3M2FROTZQZWNDNkpFLkNo000oJm1pbWVfdHlwZT1hdWRpb19tcGVnJnJjPU0yYzhOR2d6T1RROFBEczBaek0zTzBCcE16cDFORzQ1Y21oNE9qTXpPRFU4TkVBell5MDBNelF6Tm1JeExqVTFNRFF0WVNOdmFXY3pNbVJyYmpCaExTMWtNUzF6Y3clM0QlM0QmdnZwbD0xJmw9MjAyNjA2MjYxMzE5NTUxOUM1MDFBNzZDQTk2NTAzNTJCNCZidGFnPWUwMDBjODAwMCZzaHA9ZDA1YjE0YmQmc2hjcD0tMTc4MjQ3OTk5NgO0O0OO0O0O&p=dtGslxrcdcG9raW8uY29tMTc4MjQ3OTk5NgO0O0OO0O0O&sf=.mp3'
+];
+
+// ===== WELCOME → INTRO =====
+function showIntro(){
+  document.getElementById('welcome').style.display = 'none';
+  const intro = document.getElementById('intro');
+  intro.style.display = 'flex';
+  const video = document.getElementById('introVideo');
+  const source = document.getElementById('introVideoSource');
+  if(introVideoURL){
+    source.src = introVideoURL;
+    video.load();
+    video.play().catch(()=>{});
+  } else {
+    source.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
+    video.load();
+    video.play().catch(()=>{});
+  }
+}
+
+function skipIntro(){
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+  document.body.style.overflow = 'auto';
+  loadProfile();
+  updateClock();
+  startAutoSlide();
+  renderLinktree();
+  updateDashboard();
+  if(playlist.length > 0) playSong(0);
+}
+
+// Video selesai otomatis ke home
+document.getElementById('introVideo').addEventListener('ended', skipIntro);
+
+// ===== UPLOAD INTRO VIDEO =====
+function uploadIntroVideo(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const video = document.getElementById('introVideo');
+    const source = document.getElementById('introVideoSource');
+    source.src = e.target.result;
+    video.load();
+    localStorage.setItem('introVideo', e.target.result);
+    runFeature('🎬 Video', 'Intro video berhasil diupload!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== UPLOAD MP3 =====
+function uploadMP3(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    playlist.push(e.target.result);
+    localStorage.setItem('playlist', JSON.stringify(playlist));
+    updateSongIndicator();
+    runFeature('🎵 MP3', 'Lagu berhasil diupload!');
+    if(playlist.length === 1) playSong(0);
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== UPLOAD AVATAR =====
+function uploadAvatar(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById('avatar').src = e.target.result;
+    localStorage.setItem('avatar', e.target.result);
+    runFeature('🖼️ Avatar', 'Foto profil berhasil diupload!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== CAROUSEL =====
+function initDots(){
+  const dots = document.getElementById('carouselDots');
+  dots.innerHTML = '';
+  for(let i=0;i<totalSlides;i++){
+    const dot = document.createElement('span');
+    dot.className = 'dot' + (i===0?' active':'');
+    dot.onclick = ()=>goToSlide(i);
+    dots.appendChild(dot);
+  }
+}
+initDots();
+
+function moveCarousel(direction){
+  currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+  updateCarousel();
+}
+function goToSlide(index){
+  currentSlide = index;
+  updateCarousel();
+}
+function updateCarousel(){
+  document.getElementById('carouselContainer').style.transform = `translateX(-${currentSlide*100}%)`;
+  document.querySelectorAll('.dot').forEach((dot,i)=>dot.classList.toggle('active',i===currentSlide));
+}
+function startAutoSlide(){
+  if(autoSlideInterval) clearInterval(autoSlideInterval);
+  autoSlideInterval = setInterval(()=>moveCarousel(1), 4000);
+}
+
+// ===== MUSIC =====
+function playSong(index){
+  const audio = document.getElementById('bgMusic');
+  if(index < playlist.length){
+    audio.src = playlist[index];
+    audio.load();
+    audio.play().catch(()=>{});
+    currentSongIndex = index;
+    isPlaying = true;
+    updateSongIndicator();
+    updateDashboard();
+  }
+}
+function nextSong(){
+  if(playlist.length === 0) return;
+  const next = (currentSongIndex + 1) % playlist.length;
+  playSong(next);
+}
+function toggleMusic(){
+  const audio = document.getElementById('bgMusic');
+  if(playlist.length === 0){ runFeature('⚠️', 'Upload MP3 dulu!'); return; }
+  if(!audio.src){ playSong(0); return; }
+  if(audio.paused){ audio.play().catch(()=>{}); isPlaying=true; }
+  else { audio.pause(); isPlaying=false; }
+}
+function updateSongIndicator(){
+  const el = document.getElementById('songIndicator');
+  if(playlist.length > 0){
+    el.textContent = `🎵 Lagu ${currentSongIndex+1} dari ${playlist.length}`;
+    document.getElementById('dashSong').textContent = `${currentSongIndex+1}`;
+  } else {
+    el.textContent = '🎵 Belum ada lagu';
+    document.getElementById('dashSong').textContent = '-';
+  }
+}
+document.getElementById('bgMusic').addEventListener('ended', ()=>{
+  if(playlist.length > 1) nextSong();
+  else if(playlist.length === 1){ this.currentTime = 0; this.play().catch(()=>{}); }
+});
+
+// ===== LINKTREE =====
+function addLinktree(){
+  const platform = document.getElementById('platformSelect').value;
+  const username = document.getElementById('usernameInput').value.trim();
+  if(!username){ runFeature('⚠️', 'Masukkan username!'); return; }
+  linktreeData.push({platform, username});
+  localStorage.setItem('linktree', JSON.stringify(linktreeData));
+  document.getElementById('usernameInput').value = '';
+  renderLinktree();
+  runFeature('🔗', `Linktree ${platform} ditambahkan!`);
+}
+function removeLinktree(index){
+  linktreeData.splice(index,1);
+  localStorage.setItem('linktree', JSON.stringify(linktreeData));
+  renderLinktree();
+}
+function renderLinktree(){
+  const el = document.getElementById('linktreeList');
+  if(linktreeData.length === 0){ el.innerHTML = '<div style="color:#666;font-size:12px">Belum ada link</div>'; return; }
+  el.innerHTML = linktreeData.map((item,i)=>{
+    const urls = {
+      tiktok: 'https://tiktok.com/@',
+      instagram: 'https://instagram.com/',
+      youtube: 'https://youtube.com/@',
+      twitter: 'https://twitter.com/',
+      facebook: 'https://facebook.com/',
+      github: 'https://github.com/',
+      whatsapp: 'https://wa.me/',
+      telegram: 'https://t.me/',
+      discord: 'https://discord.com/users/',
+      spotify: 'https://open.spotify.com/user/'
+    };
+    const icon = {
+      tiktok:'🎵', instagram:'📸', youtube:'▶️', twitter:'🐦',
+      facebook:'📘', github:'🐙', whatsapp:'💬', telegram:'✈️',
+      discord:'🎮', spotify:'🎧'
+    };
+    return `<div class="lt-item">
+      <a href="${urls[item.platform]}${item.username}" target="_blank">${icon[item.platform]||'🔗'} ${item.platform}: @${item.username}</a>
+      <button class="del-btn" onclick="removeLinktree(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ===== PROFIL =====
+function saveProfile(){
+  const name = document.getElementById('nameEdit').value.trim();
+  const bio = document.getElementById('bioEdit').value.trim();
+  if(name) localStorage.setItem('name', name);
+  if(bio) localStorage.setItem('bio', bio);
+  loadProfile();
+  runFeature('✅ Profil', 'Profil disimpan!');
+}
+function loadProfile(){
+  const name = localStorage.getItem('name') || '𝐂𝐘𝐁𝐄𝐑 𝐕𝐎𝐈𝐃';
+  const bio = localStorage.getItem('bio') || '⚡ 𝐃𝐈𝐆𝐈𝐓𝐀𝐋 𝐕𝐎𝐈𝐃 ⚡';
+  const avatar = localStorage.getItem('avatar') || 'https://via.placeholder.com/100';
+  document.getElementById('nameView').textContent = name;
+  document.getElementById('bioView').textContent = bio;
+  document.getElementById('avatar').src = avatar;
+  document.getElementById('nameEdit').value = name;
+  document.getElementById('bioEdit').value = bio;
+  document.getElementById('dashName').textContent = name;
+}
+
+// ===== CLOCK =====
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = `⏰ ${now.toTimeString().split(' ')[0]}`;
+  setTimeout(updateClock, 1000);
+}
+
+// ===== THEME =====
+function changeTheme(color){
+  const colors = { red:'#ff004c', blue:'#0066ff', green:'#00ff66', purple:'#a855f7', orange:'#ff6b00', pink:'#ff00ff' };
+  const newColor = colors[color] || '#7c3aed';
+  document.querySelectorAll('.card, input, textarea, .fitem, .linktree-item input, .linktree-item select, #clock, .carousel-wrapper').forEach(el => {
+    el.style.borderColor = newColor;
+  });
+  document.querySelectorAll('.btn-save, .enter-btn, .music-controls button, .linktree-item button, #intro .skip').forEach(el => {
+    el.style.background = `linear-gradient(90deg, ${newColor}, #7c3aed)`;
+  });
+  document.getElementById('dashTheme').textContent = color.charAt(0).toUpperCase() + color.slice(1);
+  runFeature('🎨', `Tema ${color.toUpperCase()}`);
+}
+
+// ===== DARK/LIGHT MODE =====
+function toggleDarkMode(){
+  document.body.classList.toggle('light-mode');
+  const mode = document.body.classList.contains('light-mode') ? 'Light' : 'Dark';
+  document.getElementById('dashMode').textContent = mode;
+  runFeature('🌓', `Mode ${mode}`);
+}
+
+// ===== DASHBOARD UPDATE =====
+function updateDashboard(){
+  const name = localStorage.getItem('name') || 'CYBER VOID';
+  document.getElementById('dashName').textContent = name;
+}
+
+// ===== TOAST =====
+function runFeature(name, message){
+  const old = document.querySelector('.toast');
+  if(old) old.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<strong style="color:#a855f7;font-size:13px">${name}</strong><br><span style="font-size:11px;color:#ccc">${message}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => { if(toast.parentNode) toast.remove(); }, 3000);
+}
+
+// ===== FITUR LAIN =====
+function randomNumber(){ runFeature('🎲', `${Math.floor(Math.random()*1000)+1}`); }
+function copyText(){
+  const text = prompt('📋 Teks:', 'CYBER VOID');
+  if(text){ navigator.clipboard.writeText(text).then(()=>runFeature('📋','Teks di-copy!')).catch(()=>runFeature('📋','Gagal copy!')); }
+}
+function reloadPage(){ runFeature('🔄','Reload...'); setTimeout(()=>location.reload(), 800); }
+function showDate(){
+  const now = new Date();
+  runFeature('📅', now.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' }));
+}
+function particleBurst(){
+  for(let i=0;i<50;i++){
+    const p = document.createElement('div');
+    p.style.cssText = `position:fixed;pointer-events:none;z-index:9998;width:${Math.random()*20+5}px;height:${Math.random()*20+5}px;background:${['#ff004c','#7c3aed','#00ffc8','#ffdd00','#ff6b00'][Math.floor(Math.random()*5)]};border-radius:${Math.random()>0.5?'50%':'0%'};left:${Math.random()*window.innerWidth}px;top:${Math.random()*window.innerHeight}px;box-shadow:0 0 30px ${['#ff004c','#7c3aed','#00ffc8','#ffdd00','#ff6b00'][Math.floor(Math.random()*5)]};animation:burst 1s ease-out forwards`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 1000);
+  }
+  runFeature('✨','Kembang api!');
+}
+// CSS buat particle
+const styleParticle = document.createElement('style');
+styleParticle.textContent = `@keyframes burst{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2) translateY(-200px)}}`;
+document.head.appendChild(styleParticle);
+
+// ===== INIT =====
+// Load playlist dari localStorage atau default
+const savedPlaylist = localStorage.getItem('playlist');
+if(savedPlaylist){
+  try {
+    const parsed = JSON.parse(savedPlaylist);
+    if(parsed.length > 0) playlist = parsed;
+    else playlist = defaultPlaylist;
+  } catch(e){ playlist = defaultPlaylist; }
+} else {
+  playlist = defaultPlaylist;
+  localStorage.setItem('playlist', JSON.stringify(playlist));
+}
+
+// Load linktree
+linktreeData = JSON.parse(localStorage.getItem('linktree')) || [];
+// Load avatar
+const savedAvatar = localStorage.getItem('avatar');
+if(savedAvatar) document.getElementById('avatar').src = savedAvatar;
+// Load intro video
+introVideoURL = localStorage.getItem('introVideo') || '';
+if(introVideoURL){
+  const source = document.getElementById('introVideoSource');
+  source.src = introVideoURL;
+  document.getElementById('introVideo').load();
+}
+loadProfile();
+updateClock();
+renderLinktree();
+updateDashboard();
+updateSongIndicator();
+</script>
+</body>
+</html>
